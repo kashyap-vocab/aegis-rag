@@ -2,7 +2,7 @@
 
 **Code:** https://github.com/kashyap-vocab/aegis-rag · **Notebook:** https://www.kaggle.com/code/mandavakashyapsai/operation-aegis-offline-rag
 
-A fully offline Retrieval-Augmented Generation system that answers questions about technical SOPs, and refuses when the answer isn't in them. It makes no cloud API calls. Every model is open-weight and runs locally: verified on a laptop CPU and on a Kaggle T4 with internet disabled, and packaged for air-gapped Docker deployment.
+A fully offline Retrieval-Augmented Generation system that answers questions about technical SOPs, and refuses when the answer isn't in them. It makes no cloud API calls. Every model is open-weight and runs locally: verified on a laptop CPU, on a Kaggle T4 with internet disabled, and in a Docker container with no network at all (tested in CI).
 
 **Headline results, with Qwen2.5-3B-Instruct running locally:**
 
@@ -321,6 +321,7 @@ To test generalisation we built a larger set after all tuning was frozen: 50 ans
   - The builder runs `uv sync --frozen`, downloads the models, exports ONNX, builds the index, and strips unused weights.
   - The runtime image runs as a non-root user with `HF_HUB_OFFLINE=1` and a `HEALTHCHECK`.
   - `docker-compose.yml` runs `api` and `llm` (Ollama) on an `internal: true` network, so the LLM container has no route out. An `observability` profile adds Prometheus and Grafana.
+  - **Verified in CI** (GitHub Actions, `.github/workflows/docker.yml`): the image builds from scratch, then runs with `docker run --network none`. Inside the container it passes `/health` (5 chunks indexed), a correct answer (`Alpha-7-Tango`), the trap refused at the gate, the injection refused, and the Prometheus metrics check. The test also confirms that outbound network access fails from inside the container.
 - **Air-gapped delivery:**
   1. Build on a connected machine.
   2. `docker save` the images, and export the Ollama model volume.
