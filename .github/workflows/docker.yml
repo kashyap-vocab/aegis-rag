@@ -5,6 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSE_PROJECT_NAME: aegis
+
 jobs:
   airgapped-image:
     runs-on: ubuntu-latest
@@ -90,10 +97,12 @@ jobs:
       - name: Start stack (api + ollama)
         run: |
           docker compose build api
+          docker compose create
           docker compose up -d llm
-          docker network connect "$(basename "$PWD")_edge" "$(docker compose ps -q llm)"
+          docker network ls
+          docker network connect aegis_edge "$(docker compose ps -q llm)"
           docker compose exec -T llm ollama pull qwen2.5:3b-instruct-q4_K_M
-          docker network disconnect "$(basename "$PWD")_edge" "$(docker compose ps -q llm)"
+          docker network disconnect aegis_edge "$(docker compose ps -q llm)"
           docker compose up -d api
           for i in $(seq 1 90); do curl -fs localhost:8000/health && break; sleep 2; done
 
