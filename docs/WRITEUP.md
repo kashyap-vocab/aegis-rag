@@ -258,7 +258,52 @@ Per-stage p50 latency on the laptop CPU:
 
 ### 6.4 Kaggle notebook run (internet disabled, Tesla T4)
 
-KAGGLE_RESULTS_PLACEHOLDER
+This is the same code, run as an attached public notebook:
+- **Models:** Qwen2.5-3B-Instruct loaded from Kaggle Models with `transformers`/PyTorch in fp16. The embedder and reranker load from an attached dataset. Dependencies install from an attached wheel dataset with `pip --no-index`.
+- **Results reproduce the local Ollama run exactly:**
+
+| Set | Overall | Answerable correct | Traps refused | False refusals | Retrieval hit@1 | p50 latency | p95 latency |
+|---|---|---|---|---|---|---|---|
+| Official | **6/6** | 4/4 | **2/2** | **0/4** | 4/4 | 3.4 s | 4.7 s |
+| Supplementary | 12/14 | 8/10 | 4/4 | 0/10 | 10/10 | 3.3 s | 4.1 s |
+| All | **18/20** | 12/14 | **6/6** | **0/14** | 14/14 | 3.3 s | 4.6 s |
+
+- **Latency:** generation drops from ~7.4 s (laptop CPU, 4-bit Ollama) to ~2.7 s (T4, fp16), and the LLM loads in 16.7 s. The retrieval and verification stages are unchanged.
+- **Guardrail ablation on the T4 run:** the full configuration has 0/14 false refusals, while "no gate" and "LLM only" each have 1/14. This agrees with the CPU run: the gate improves answer quality by keeping noisy chunks away from the model.
+
+**CPU and GPU give identical answers.** Same notebook, official set, LLM forced to CPU:
+
+| Device | Official accuracy | Traps refused | p50 latency | p95 latency |
+|---|---|---|---|---|
+| Kaggle T4 GPU (fp16, `transformers`) | 6/6 | 2/2 | 3.4 s | 5.0 s |
+| Kaggle CPU (2 vCPU, fp32, `transformers`) | 6/6 | 2/2 | 47.0 s | 55.4 s |
+| Laptop CPU (Ryzen 5 5500U, 4-bit Q4_K_M via Ollama) | 6/6 | 2/2 | 8.1 s | 18.2 s |
+
+The accuracy doesn't change with the hardware, only the latency does. On CPU-only edge hardware, 4-bit quantised serving (Ollama/llama.cpp) is about 6× faster than an unquantised fp32 model on a similar CPU budget. That is why Ollama with Q4_K_M is the deployment default, and `transformers` with fp16 is the GPU path.
+
+**One engineering issue found only on Kaggle.** The first run failed with CUDA out-of-memory while loading the LLM. JAX, pulled in by `bm25s`'s optional top-k backend, pre-allocated 75% of the T4's memory. We fixed it by forcing `bm25s` onto its NumPy backend (which is also more deterministic) and setting `JAX_PLATFORMS=cpu`.
+
+### 6.5 Extended held-out evaluation (100 queries)
+
+To test generalisation we built a larger set after all tuning was frozen: 50 answerable questions (direct, paraphrase, reasoning, keyword-only) and 50 unanswerable ones (missing attribute, false premise, off-domain, near-miss number, adversarial). Full report: `docs/EXTENDED_EVAL.md`.
+
+| System | Overall | Answerable correct | Unanswerable refused | Retrieval hit@1 | p50 latency | p95 latency |
+|---|---|---|---|---|---|---|
+| No-LLM extractive baseline | 52/100 | 37/50 | 15/50 | 50/50 | 0.44 s | 0.49 s |
+| Qwen2.5-1.5B-Instruct | 76/100 | 33/50 | 43/50 | 50/50 | 2.85 s | 4.37 s |
+| **Qwen2.5-3B-Instruct** | **91/100** | **43/50** | **48/50** | **50/50** | 4.91 s | 7.18 s |
+
+| Category (Qwen2.5-3B) | Accuracy | Category (Qwen2.5-3B) | Accuracy |
+|---|---|---|---|
+| Direct | 18/18 (100%) | Missing attribute | 20/20 (100%) |
+| Paraphrase | 14/14 (100%) | False premise | 9/10 (90%) |
+| Reasoning | 7/11 (64%) | Off-domain | 10/10 (100%) |
+| Keyword-only | 4/7 (57%) | Near-miss number | 4/5 (80%) |
+| | | Adversarial | 5/5 (100%) |
+
+- **The gate threshold generalises.** It was calibrated on 20 earlier queries. On the 50 unseen answerable questions it wrongly refused none, and it stopped 9/10 off-domain questions without an LLM call, 0.5 s vs 5.8 s for a generated answer.
+- **Each layer covers a distinct category:** the gate handles off-domain questions, the LLM judgement handles in-domain missing-attribute and false-premise questions, and the injection filter handles override attempts (< 1 ms).
+- **3B answers every direct and paraphrased question.** The 1.5B model is more conservative (10/18 direct questions answered), which is why it serves only as the fallback.
 
 ---
 

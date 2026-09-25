@@ -1,0 +1,11 @@
+config,set,overall_accuracy,answerable_accuracy,trap_refusal,false_refusals
+full (L1+L2+L3+L4),official,6/6,4/4,2/2,0/4
+full (L1+L2+L3+L4),all,18/20,12/14,6/6,0/14
+no gate (L1 off),official,6/6,4/4,2/2,0/4
+no gate (L1 off),all,18/20,12/14,6/6,1/14
+no quote check (L3 off),official,6/6,4/4,2/2,0/4
+no quote check (L3 off),all,18/20,12/14,6/6,0/14
+no grounding (L4 off),official,6/6,4/4,2/2,0/4
+no grounding (L4 off),all,18/20,12/14,6/6,0/14
+LLM only,official,6/6,4/4,2/2,0/4
+LLM only,all,18/20,12/14,6/6,1/14

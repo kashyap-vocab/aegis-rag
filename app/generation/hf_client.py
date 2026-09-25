@@ -10,7 +10,8 @@ class TransformersClient:
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         self.s = settings
-        self.name = f"transformers/{settings.llm_model.rstrip('/').split('/')[-1]}"
+        parts = [x for x in settings.llm_model.replace("\\", "/").rstrip("/").split("/") if x and not x.isdigit()]
+        self.name = f"transformers/{parts[-1] if parts else settings.llm_model}"
         cuda = torch.cuda.is_available()
         if settings.llm_device == "cuda" and not cuda:
             raise RuntimeError("AEGIS_LLM_DEVICE=cuda but no CUDA device is available")

@@ -3,6 +3,9 @@ services:
     build: .
     image: aegis-rag:1.0
     ports: ["8000:8000"]
+    environment:
+      AEGIS_LLM_MODEL: ${AEGIS_LLM_MODEL:-qwen2.5:3b-instruct-q4_K_M}
+      AEGIS_LLM_FALLBACK_MODEL: ${AEGIS_LLM_FALLBACK_MODEL:-qwen2.5:1.5b-instruct-q4_K_M}
     volumes:
       - ./knowledge_base:/app/knowledge_base:ro
       - index:/app/data

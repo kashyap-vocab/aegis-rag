@@ -1,0 +1,44 @@
+{
+  "official": {
+    "n": 6,
+    "overall_accuracy": "6/6",
+    "answerable_accuracy": "4/4",
+    "trap_refusal": "2/2",
+    "false_refusals": "0/4",
+    "retrieval_hit@1": "4/4",
+    "refusal_layers": {
+      "gate": 1,
+      "llm": 1
+    },
+    "latency_p50_ms": 3414.0,
+    "latency_p95_ms": 4971.9
+  },
+  "supplementary": {
+    "n": 14,
+    "overall_accuracy": "12/14",
+    "answerable_accuracy": "8/10",
+    "trap_refusal": "4/4",
+    "false_refusals": "0/10",
+    "retrieval_hit@1": "10/10",
+    "refusal_layers": {
+      "gate": 1,
+      "llm": 3
+    },
+    "latency_p50_ms": 3351.9,
+    "latency_p95_ms": 4174.6
+  },
+  "all": {
+    "n": 20,
+    "overall_accuracy": "18/20",
+    "answerable_accuracy": "12/14",
+    "trap_refusal": "6/6",
+    "false_refusals": "0/14",
+    "retrieval_hit@1": "14/14",
+    "refusal_layers": {
+      "gate": 2,
+      "llm": 4
+    },
+    "latency_p50_ms": 3351.9,
+    "latency_p95_ms": 4505.0
+  }
+}
