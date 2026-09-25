@@ -321,7 +321,7 @@ To test generalisation we built a larger set after all tuning was frozen: 50 ans
   - The builder runs `uv sync --frozen`, downloads the models, exports ONNX, builds the index, and strips unused weights.
   - The runtime image runs as a non-root user with `HF_HUB_OFFLINE=1` and a `HEALTHCHECK`.
   - `docker-compose.yml` runs `api` and `llm` (Ollama) on an `internal: true` network, so the LLM container has no route out. An `observability` profile adds Prometheus and Grafana.
-  - **Verified in CI** (GitHub Actions, `.github/workflows/docker.yml`): the image builds from scratch, then runs with `docker run --network none`. Inside the container it passes `/health` (5 chunks indexed), a correct answer (`Alpha-7-Tango`), the trap refused at the gate, the injection refused, and the Prometheus metrics check. The test also confirms that outbound network access fails from inside the container.
+  - **Verified in CI** (GitHub Actions, `.github/workflows/docker.yml`): the image builds from scratch, then runs with `docker run --network none`. Inside the container it passes `/health` (5 chunks indexed), a correct answer (`Alpha-7-Tango`), the trap refused at the gate, the injection refused, and the Prometheus metrics check. The test also confirms that outbound network access fails from inside the container. A second CI job brings up the full `docker compose` stack (API + Ollama serving Qwen2.5-3B) with the LLM container on the internal network only. It answers "Which HF band is used for comms failover?" with 14.5 MHz and refuses the coolant-manufacturer trap.
 - **Air-gapped delivery:**
   1. Build on a connected machine.
   2. `docker save` the images, and export the Ollama model volume.
