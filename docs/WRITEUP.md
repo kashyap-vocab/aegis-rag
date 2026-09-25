@@ -391,3 +391,16 @@ The system never falls back to "answer without verification". `/health` reports 
 - **Open-source components:** FAISS, bm25s, ONNX Runtime, Hugging Face transformers and sentence-transformers, LangGraph, FastAPI, prometheus-client, structlog.
 - **Models:** BAAI bge-small-en-v1.5, BAAI bge-reranker-base, Qwen2.5-Instruct (Alibaba Qwen team).
 - Code was written with the help of an AI coding assistant; every design decision and measurement is documented in the repository's build log (`docs/BUILD_LOG.md`).
+
+## 11. Submission requirements checklist
+
+| Requirement | Where |
+|---|---|
+| System architecture, framework choice (LangGraph), agent workflow | §1: diagram, choice table, LangGraph `StateGraph` with conditional refusal edges and fallback chain |
+| Chunking logic, embeddings, vector DB configuration | §2.1 – §2.3, §4 (FAISS `IndexFlatIP` + SQLite; bge-small-en-v1.5 transformer embeddings) |
+| Prompt and retrieval logic for grounding; evaluation, regression tests, hallucination detection | §3 (4 layers, evidence-first prompt, calibrated gate, quote and grounding detectors), §5 (harness, ablation, 82 tests), §6 (results) |
+| Public, reproducible notebook, end to end | [Kaggle notebook](https://www.kaggle.com/code/mandavakashyapsai/operation-aegis-offline-rag): chunking → indexing → hybrid retrieval → reranking → LangGraph → LLM → evaluation, with saved outputs |
+| Open-weight LLM inference with PyTorch, plus transformer embeddings | Qwen2.5-3B-Instruct via Hugging Face `transformers` on PyTorch (T4 fp16 and CPU); bge-small-en-v1.5 and bge-reranker-base transformer encoders (ONNX Runtime, numerically identical to PyTorch) |
+| No cloud APIs | Notebook runs with internet disabled; no external LLM API anywhere in the codebase |
+| Scalable offline inference APIs and deployment | §7: FastAPI service, Docker/Compose on an internal network, air-gapped delivery, scaling path to vLLM; image verified in CI with `--network none` |
+| Monitoring, logging and fallback | §8: Prometheus metrics and alerts, structured logs with request IDs, per-request traces, primary → fallback LLM → fail-closed refusal |
