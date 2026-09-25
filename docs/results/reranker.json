@@ -1,0 +1,1169 @@
+{
+  "runtime": {
+    "onnxruntime": "1.30.0",
+    "available": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "selected": [
+      "CPUExecutionProvider"
+    ],
+    "threads": 6
+  },
+  "results": [
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "load_s": 1.8,
+      "rerank_p50_ms": 805.1,
+      "rerank_p95_ms": 1214.1,
+      "hit@1": "14/14",
+      "mrr": 1.0,
+      "max_drift_vs_fp32": 0.0,
+      "auroc_ans_vs_trap": 0.917,
+      "min_answerable_top": 0.015,
+      "max_trap_top": 0.5226
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "load_s": 11.06,
+      "rerank_p50_ms": 617.0,
+      "rerank_p95_ms": 779.9,
+      "hit@1": "14/14",
+      "mrr": 1.0,
+      "max_drift_vs_fp32": 0.0,
+      "auroc_ans_vs_trap": 0.917,
+      "min_answerable_top": 0.015,
+      "max_trap_top": 0.5226
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "load_s": 2.76,
+      "rerank_p50_ms": 514.2,
+      "rerank_p95_ms": 741.4,
+      "hit@1": "14/14",
+      "mrr": 1.0,
+      "max_drift_vs_fp32": 0.1895,
+      "auroc_ans_vs_trap": 0.893,
+      "min_answerable_top": 0.0125,
+      "max_trap_top": 0.6662
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "load_s": 0.64,
+      "rerank_p50_ms": 122.8,
+      "rerank_p95_ms": 145.9,
+      "hit@1": "14/14",
+      "mrr": 1.0,
+      "max_drift_vs_fp32": 0.0,
+      "auroc_ans_vs_trap": 0.857,
+      "min_answerable_top": 0.0114,
+      "max_trap_top": 0.8483
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "load_s": 0.5,
+      "rerank_p50_ms": 101.5,
+      "rerank_p95_ms": 145.1,
+      "hit@1": "14/14",
+      "mrr": 1.0,
+      "max_drift_vs_fp32": 0.0,
+      "auroc_ans_vs_trap": 0.857,
+      "min_answerable_top": 0.0114,
+      "max_trap_top": 0.8483
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "load_s": 0.34,
+      "rerank_p50_ms": 84.5,
+      "rerank_p95_ms": 102.4,
+      "hit@1": "14/14",
+      "mrr": 1.0,
+      "max_drift_vs_fp32": 0.124,
+      "auroc_ans_vs_trap": 0.857,
+      "min_answerable_top": 0.0119,
+      "max_trap_top": 0.8304
+    }
+  ],
+  "per_query": [
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9361
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9996
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.871
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.988
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.0039
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.5226
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.1884
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.9093
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.085
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9896
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.015
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9967
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.8441
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9947
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9985
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9931
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.0892
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0207
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0225
+    },
+    {
+      "model": "bge-reranker-base|torch-fp32",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0011
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9361
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9996
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.871
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.988
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.0039
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.5226
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.1884
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.9093
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.085
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9896
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.015
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9967
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.8441
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9947
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9985
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9931
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.0892
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0207
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0225
+    },
+    {
+      "model": "bge-reranker-base|onnx-fp32",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0011
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.955
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9995
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.8777
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9886
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.0046
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.6662
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.2569
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.865
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0442
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.986
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.0125
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9963
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.8184
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9941
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9984
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9908
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.2787
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.032
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0599
+    },
+    {
+      "model": "bge-reranker-base|onnx-int8",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0012
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9969
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9999
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9732
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9995
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.0256
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.8483
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0135
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.99
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.95
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.473
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.0114
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9989
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9979
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9953
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9998
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9988
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.1496
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.6069
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.1191
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|torch-fp32",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9969
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9999
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9732
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9995
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.0256
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.8483
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0135
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.99
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.95
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.473
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.0114
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9989
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9979
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9953
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9998
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9988
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.1496
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.6069
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.1191
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-fp32",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.997
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9999
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9752
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9995
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.0214
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.8304
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0119
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.9924
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.961
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.349
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.0131
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9987
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9978
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Procedure",
+      "top_score": 0.9914
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.9998
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.9987
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Maintenance Schedule",
+      "top_score": 0.1521
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_001_Radar_Calibration.md",
+      "top_section": "Overview",
+      "top_score": 0.6119
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_003_Comms_Protocol.md",
+      "top_section": "Protocol",
+      "top_score": 0.0847
+    },
+    {
+      "model": "ms-marco-MiniLM-L6-v2|onnx-int8",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "top_doc": "SOP_002_Cooling_System.md",
+      "top_section": "Thermal Thresholds",
+      "top_score": 0.0
+    }
+  ]
+}

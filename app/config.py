@@ -56,8 +56,15 @@ class Settings(BaseSettings):
 
     # --- Reranking + gate (D5, D8) ------------------------------------------
     rerank_model: str = "BAAI/bge-reranker-base"
+    # fp32: int8 drifted scores by up to 0.19 and pushed traps upward (bench_reranker.py),
+    # which breaks the gate calibration. Embedder int8 is fine; reranker int8 is not.
+    rerank_quantized: bool = False
+    rerank_max_length: int = 512  # query + chunk tokens; SOP chunks are far shorter
     rerank_top_n: int = 3
-    rerank_threshold: float = 0.3  # τ — calibrated in step 5
+    # τ: plateau 0.005-0.0125 gives 0/14 answerable refused, 2/6 traps refused
+    # (scripts/calibrate_gate.py); 0.0075 = log-midpoint. Deliberately low: a false
+    # refusal here is unrecoverable, a trap that passes still meets later layers.
+    rerank_threshold: float = 0.0075
 
     # --- Generation (D0) ---------------------------------------------------
     # ollama -> Docker deployment; transformers -> Kaggle notebook (internet off);

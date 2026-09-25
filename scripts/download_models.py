@@ -7,6 +7,7 @@ SHA-256 manifest so the air-gapped side can verify integrity after transfer.
     uv run scripts/download_models.py
 """
 
+import argparse
 import hashlib
 import json
 import sys
@@ -56,9 +57,18 @@ def write_manifest(models_dir: Path) -> None:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "--extra-rerankers", nargs="*", default=[],
+        help="additional cross-encoders to fetch for benchmarking, e.g. cross-encoder/ms-marco-MiniLM-L6-v2",
+    )
+    args = ap.parse_args()
+
     s = get_settings()
     s.models_dir.mkdir(parents=True, exist_ok=True)
-    for repo_id, cls in [(s.embed_model, SentenceTransformer), (s.rerank_model, CrossEncoder)]:
+    models = [(s.embed_model, SentenceTransformer), (s.rerank_model, CrossEncoder)]
+    models += [(repo, CrossEncoder) for repo in args.extra_rerankers]
+    for repo_id, cls in models:
         target = s.local_model_dir(repo_id)
         fetch(repo_id, target, cls)
         quantize(target, cls, s.quant_config)

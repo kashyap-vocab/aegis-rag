@@ -187,3 +187,66 @@ Findings:
 **Issues / notes**
 - With 5 chunks and `fusion_top_k=5`, expansion adds nothing on this corpus (every chunk is already a candidate); verified separately with `fusion_top_k=1` (Procedure hit → Overview neighbour added with `expanded_from`). It matters for larger/longer SOP sets.
 - On Windows, the atomic swap (`rename`) would fail if another process holds the index open; the API's `/ingest` (Step 8) must close/reload handles around the swap.
+
+---
+
+## Step 5 — Reranker selection and refusal-gate calibration
+
+**What**
+- `app/models/reranker.py` — cross-encoder wrapper: local files only; `torch-fp32 | onnx-fp32 | onnx-int8`; ONNX session with graph optimisation, threads, provider selection; raw logits → our own sigmoid (identical scoring across models/variants); inputs stripped; reranks on `embed_text` (title > section + body) and returns top `rerank_top_n`.
+- `scripts/download_models.py --extra-rerankers ...` — fetch additional cross-encoders for benchmarking (MiniLM downloaded, ONNX-exported, int8-quantized, added to manifest).
+- `scripts/bench_reranker.py` → `docs/results/reranker.json` — 2 models × 3 variants on identical hybrid candidates, 20 queries (official + supplementary), 5 timed runs each.
+- `scripts/calibrate_gate.py` → `docs/results/gate_calibration.json` — τ sweep over saved scores (no models needed; reproducible).
+- `tests/test_reranker.py` — score range, empty input, sort/truncate, override-code chunk ranks first, official-set gate behaviour at the calibrated τ.
+
+**Tokenizer warning check (open item from Step 3)**
+`transformers` warned about an "incorrect regex pattern" in the bge-reranker tokenizer. Compared the fast tokenizer against the reference SentencePiece `XLMRobertaTokenizer` on all 3 SOPs, all official questions and a domain-token stress string: **identical token ids on all real texts**; the only difference is one extra `▁` token on an artificial string with trailing whitespace. Reranker inputs are `.strip()`-ed → no effect. Warning is a false positive for this data. (`sentencepiece` used only via `uv run --with` for this check; not a project dependency.)
+
+**Results** (CPU only, 6 threads, offline; latency = rerank of all ~5 candidates for one query)
+
+| Model / variant | Load (s) | p50 (ms) | p95 (ms) | hit@1 (n=14) | MRR | Max drift vs fp32 | AUROC ans-vs-trap | Max trap top score |
+|---|---|---|---|---|---|---|---|---|
+| bge-reranker-base / torch-fp32 | 1.8 | 805 | 1214 | 14/14 | 1.0 | 0 | 0.917 | 0.523 |
+| **bge-reranker-base / onnx-fp32** | 11.1 | **617** | 780 | 14/14 | 1.0 | **0** | **0.917** | **0.523** |
+| bge-reranker-base / onnx-int8 | 2.8 | 514 | 741 | 14/14 | 1.0 | **0.190** | 0.893 | 0.666 |
+| MiniLM-L6-v2 / torch-fp32 | 0.6 | 123 | 146 | 14/14 | 1.0 | 0 | 0.857 | 0.848 |
+| MiniLM-L6-v2 / onnx-fp32 | 0.5 | 102 | 145 | 14/14 | 1.0 | 0 | 0.857 | 0.848 |
+| MiniLM-L6-v2 / onnx-int8 | 0.3 | 85 | 102 | 14/14 | 1.0 | 0.124 | 0.857 | 0.830 |
+
+(AUROC = probability an answerable query's top score exceeds a trap's; 0.5 = useless, 1.0 = perfect separation.)
+
+Top reranked score per query (bge-reranker-base onnx-fp32): answerable official 1–4: 0.936 / 1.000 / 0.871 / 0.988; **trap 5: 0.0039**; **trap 6: 0.523**; supplementary traps S11–S14: 0.089 / 0.021 / 0.023 / 0.001; lowest answerable paraphrases: S5 0.015, S3 0.085, S1 0.188.
+
+**Findings**
+1. **Ranking accuracy is saturated** — all six configurations put the correct document first for all 14 answerable queries. The choice therefore rests on gate quality, calibration and speed.
+2. **The reranker is a far better refusal signal than retrieval scores.** Retrieval scores ranked traps *above* real questions (Step 4); bge-reranker reaches AUROC 0.917. It recognises that the radar procedure does not answer "maximum range in bad weather" (trap 5 → 0.0039) even though every retrieval score for that query was high.
+3. **But no threshold separates everything.** Trap 6 (coolant manufacturer) scores 0.523 — the chunk *mentions* "Type-C Marine" coolant, so the cross-encoder judges it relevant. Meanwhile valid paraphrases can score low (S5 "above 5 volts" 0.015). A high τ would refuse real questions. → Confirms the layered design: the gate is a coarse pre-filter; answer-level layers (Step 6–7) must handle in-domain traps like query 6.
+4. **int8 is fine for the embedder but NOT for the reranker.** Reranker int8 drifts scores by up to 0.19 and pushes traps *up* (trap 6: 0.52 → 0.67; S11: 0.09 → 0.28), degrading calibration of the very score the gate thresholds. Per the evidence-gated rule from Step 3, the reranker stays fp32.
+5. **MiniLM is ~6× faster but a worse gate** (AUROC 0.857; trap 6 at 0.848, trap S12 at 0.61; valid paraphrase S4 at 0.35–0.47).
+
+**Decision:** `BAAI/bge-reranker-base`, **ONNX fp32** (`rerank_quantized=False`).
+- Best gate separation (AUROC 0.917) and best calibration (lowest trap scores).
+- ONNX fp32 is numerically identical to torch (drift 0) and 23% faster (617 vs 805 ms p50).
+- ~0.6 s/query on this low-power laptop CPU is acceptable: LLM generation (Step 7) will cost seconds, and on GPU (`AEGIS_DEVICE=cuda`) the cross-encoder cost becomes negligible.
+- MiniLM-L6 ONNX stays available as a **low-latency profile** (`AEGIS_RERANK_MODEL=cross-encoder/ms-marco-MiniLM-L6-v2`, τ must be re-calibrated with `calibrate_gate.py --model ...`).
+
+**Gate calibration (τ)**
+
+| τ | Answerable wrongly refused (n=14) | Traps refused at gate (n=6) |
+|---|---|---|
+| 0.0025 | 0 | 1 (S14) |
+| **0.005 – 0.0125** | **0** | **2 (S14, official 5)** |
+| 0.02 | 1 (S5) | 2 |
+| 0.05 | 1 (S5) | 4 |
+| 0.1 | 2 (S5, S3) | 5 |
+| 0.2 – 0.5 | 3 (S5, S3, S1) | 5 |
+
+**Decision:** τ = **0.0075** (log-midpoint of the zero-false-refusal plateau between trap 5 at 0.0039 and paraphrase S5 at 0.015).
+- Cost asymmetry: a false refusal at the gate is unrecoverable (the LLM never sees the question); a trap that passes still faces constrained generation, grounding and the quote check. So τ is set at the top of the safe plateau, not to maximise trap catches.
+- Honest caveat: calibrated on 20 queries (14 answerable, 6 traps); the margin is thin (0.0039 vs 0.015). τ is config (`AEGIS_RERANK_THRESHOLD`) and must be re-run with `calibrate_gate.py` on a larger validation set before production.
+
+- **32/32 tests pass.**
+
+**Issues / notes**
+- bge-reranker ONNX fp32 first load takes ~11 s (ORT graph optimisation of a 1.1 GB model at session creation). One-off at API startup; can be removed by saving the pre-optimised graph at download time (ORT `optimized_model_filepath`) — to do in Step 8 packaging.
+- Windows console (cp1252) can't print `τ` → scripts print `tau`.

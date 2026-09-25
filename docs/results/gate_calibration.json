@@ -1,0 +1,130 @@
+{
+  "model": "bge-reranker-base|onnx-fp32",
+  "sweep": [
+    {
+      "tau": 0.001,
+      "false_refusals": [],
+      "traps_refused": []
+    },
+    {
+      "tau": 0.0025,
+      "false_refusals": [],
+      "traps_refused": [
+        "S14"
+      ]
+    },
+    {
+      "tau": 0.005,
+      "false_refusals": [],
+      "traps_refused": [
+        "S14",
+        "5"
+      ]
+    },
+    {
+      "tau": 0.0075,
+      "false_refusals": [],
+      "traps_refused": [
+        "S14",
+        "5"
+      ]
+    },
+    {
+      "tau": 0.01,
+      "false_refusals": [],
+      "traps_refused": [
+        "S14",
+        "5"
+      ]
+    },
+    {
+      "tau": 0.0125,
+      "false_refusals": [],
+      "traps_refused": [
+        "S14",
+        "5"
+      ]
+    },
+    {
+      "tau": 0.02,
+      "false_refusals": [
+        "S5"
+      ],
+      "traps_refused": [
+        "S14",
+        "5"
+      ]
+    },
+    {
+      "tau": 0.05,
+      "false_refusals": [
+        "S5"
+      ],
+      "traps_refused": [
+        "S14",
+        "5",
+        "S12",
+        "S13"
+      ]
+    },
+    {
+      "tau": 0.1,
+      "false_refusals": [
+        "S5",
+        "S3"
+      ],
+      "traps_refused": [
+        "S14",
+        "5",
+        "S12",
+        "S13",
+        "S11"
+      ]
+    },
+    {
+      "tau": 0.2,
+      "false_refusals": [
+        "S5",
+        "S3",
+        "S1"
+      ],
+      "traps_refused": [
+        "S14",
+        "5",
+        "S12",
+        "S13",
+        "S11"
+      ]
+    },
+    {
+      "tau": 0.3,
+      "false_refusals": [
+        "S5",
+        "S3",
+        "S1"
+      ],
+      "traps_refused": [
+        "S14",
+        "5",
+        "S12",
+        "S13",
+        "S11"
+      ]
+    },
+    {
+      "tau": 0.5,
+      "false_refusals": [
+        "S5",
+        "S3",
+        "S1"
+      ],
+      "traps_refused": [
+        "S14",
+        "5",
+        "S12",
+        "S13",
+        "S11"
+      ]
+    }
+  ]
+}
