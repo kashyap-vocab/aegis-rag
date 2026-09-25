@@ -2,7 +2,7 @@
 
 **Code:** https://github.com/kashyap-vocab/aegis-rag · **Notebook:** https://www.kaggle.com/code/mandavakashyapsai/operation-aegis-offline-rag
 
-A fully offline Retrieval-Augmented Generation system that answers questions about technical SOPs, and refuses when the answer isn't in them. It makes no cloud API calls. Every model is open-weight and runs locally: on a laptop CPU, on a Kaggle T4 with internet disabled, or in an air-gapped Docker deployment.
+A fully offline Retrieval-Augmented Generation system that answers questions about technical SOPs, and refuses when the answer isn't in them. It makes no cloud API calls. Every model is open-weight and runs locally: verified on a laptop CPU and on a Kaggle T4 with internet disabled, and packaged for air-gapped Docker deployment.
 
 **Headline results, with Qwen2.5-3B-Instruct running locally:**
 
