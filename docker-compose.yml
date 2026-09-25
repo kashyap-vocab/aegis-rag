@@ -1,0 +1,52 @@
+services:
+  api:
+    build: .
+    image: aegis-rag:1.0
+    ports: ["8000:8000"]
+    volumes:
+      - ./knowledge_base:/app/knowledge_base:ro
+      - index:/app/data
+    depends_on: [llm]
+    networks: [edge, airgap]
+    deploy:
+      resources:
+        limits: {cpus: "4", memory: 4g}
+    restart: unless-stopped
+
+  llm:
+    image: ollama/ollama:0.34.4
+    volumes:
+      - ollama_models:/root/.ollama
+    environment:
+      OLLAMA_KEEP_ALIVE: 30m
+    networks: [airgap]
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    profiles: [observability]
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ["9090:9090"]
+    networks: [edge, airgap]
+
+  grafana:
+    image: grafana/grafana:12.1.0
+    profiles: [observability]
+    environment:
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports: ["3000:3000"]
+    networks: [edge, airgap]
+
+networks:
+  airgap:
+    internal: true
+  edge: {}
+
+volumes:
+  index: {}
+  ollama_models: {}

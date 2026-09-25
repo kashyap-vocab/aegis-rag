@@ -1,11 +1,3 @@
-"""Adjacent-chunk expansion (D6).
-
-When a hit is one piece of a longer procedure, its neighbours (chunk_idx ±n in
-the same document) often hold the rest of the answer — e.g. a step whose
-safety limit sits in the next chunk. Neighbours are appended as candidates
-(marked ``expanded_from``) and compete on merit in the reranker.
-"""
-
 from app.schemas import RetrievedChunk
 from app.stores.docstore import DocStore
 

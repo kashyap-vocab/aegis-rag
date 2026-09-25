@@ -1,14 +1,3 @@
-"""FAISS dense store (D4).
-
-``IndexFlatIP`` = exact inner-product search. With L2-normalised embeddings
-this is exact cosine similarity: no approximation, no recall loss, and at this
-corpus size also the fastest option. HNSW / IVF-PQ are a config switch once
-the corpus reaches ~100k+ vectors.
-
-Vectors are keyed by the SQLite docstore row id via ``IndexIDMap2``, so the
-index and docstore can't drift out of alignment on re-ingest.
-"""
-
 from pathlib import Path
 
 import faiss

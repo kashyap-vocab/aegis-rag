@@ -1,11 +1,3 @@
-"""Hybrid retrieval: dense (FAISS) + sparse (BM25) fused with RRF (D4).
-
-Reciprocal Rank Fusion: score(d) = sum over retrievers of 1 / (k + rank(d)).
-It uses only ranks, so it needs no score normalisation between cosine
-similarities and BM25 scores that live on unrelated scales, and has one
-well-studied constant (k=60, Cormack et al. 2009).
-"""
-
 from pathlib import Path
 
 from app.config import Settings
@@ -19,7 +11,6 @@ from app.stores.faiss_store import FaissStore
 
 
 def rrf(rankings: dict[str, list[int]], k: int = 60) -> dict[int, float]:
-    """Fuse ranked id lists; returns id -> fused score (higher is better)."""
     fused: dict[int, float] = {}
     for ranked_ids in rankings.values():
         for rank, doc_id in enumerate(ranked_ids, start=1):
@@ -46,7 +37,6 @@ class HybridRetriever:
             raise FileNotFoundError(f"no index at {index_dir} — run `uv run scripts/ingest.py`")
         docstore = DocStore.open(index_dir)
         meta = docstore.get_meta()
-        # Querying an index with a different embedding model silently returns garbage.
         if meta.get("embed_model") != settings.embed_model or meta.get("embed_dim") != embedder.dim:
             raise IndexMismatchError(
                 f"index built with {meta.get('embed_model')} (dim {meta.get('embed_dim')}), "

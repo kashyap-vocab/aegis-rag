@@ -1,15 +1,3 @@
-"""Benchmark embedder variants (D3): torch-fp32 vs onnx-fp32 vs onnx-int8.
-
-Accuracy is measured two ways, because with a 5-chunk corpus hit@1 alone is
-too coarse to detect quantization damage:
-  * hit@1 / MRR — dense-only retrieval on the answerable eval queries
-  * fidelity    — mean cosine between each variant's embeddings and the
-                  torch-fp32 reference (1.0 = identical)
-Speed: model load time, passage throughput, single-query p50/p95 (cache off).
-
-    uv run scripts/bench_embedder.py [--runs 50]
-"""
-
 import argparse
 import json
 import statistics
@@ -42,7 +30,7 @@ def main() -> None:
     chunks = load_corpus(s.knowledge_base_dir, s.chunk_max_tokens)
     passages = [c.embed_text for c in chunks]
     queries = [q for q in load_eval_queries(s.eval_csv) if q.is_answerable]
-    throughput_batch = passages * 40  # enough text to measure throughput
+    throughput_batch = passages * 40
 
     print(json.dumps(runtime.describe(s.device, s.num_threads)))
     results, reference = [], None
@@ -52,7 +40,7 @@ def main() -> None:
         emb = Embedder(s, variant=variant)
         load_s = time.perf_counter() - t0
 
-        emb.encode_passages(passages)  # warm-up
+        emb.encode_passages(passages)
         t0 = time.perf_counter()
         emb.encode_passages(throughput_batch)
         pass_per_s = len(throughput_batch) / (time.perf_counter() - t0)

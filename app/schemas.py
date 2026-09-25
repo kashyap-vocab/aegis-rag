@@ -1,28 +1,26 @@
-"""Shared data models across ingest, retrieval, generation and the API."""
-
 from pydantic import BaseModel, Field
 
 
 class Chunk(BaseModel):
-    chunk_id: str  # f"{doc_id}::{chunk_idx}"
-    doc_id: str  # source filename, e.g. SOP_002_Cooling_System.md
+    chunk_id: str
+    doc_id: str
     sop_number: str | None = None
     title: str
-    section: str  # "Thermal Thresholds"
-    chunk_idx: int  # position within the doc, used for adjacent expansion
-    text: str  # raw chunk body (used for grounding checks)
-    embed_text: str  # "title > section\n\ntext" (what gets embedded/indexed)
+    section: str
+    chunk_idx: int
+    text: str
+    embed_text: str
 
 
 class RetrievedChunk(BaseModel):
-    id: int  # docstore row id
+    id: int
     chunk: Chunk
     rrf_score: float = 0.0
-    dense_rank: int | None = None  # 1-based; None = not in that retriever's top-k
+    dense_rank: int | None = None
     dense_score: float | None = None
     sparse_rank: int | None = None
     sparse_score: float | None = None
-    expanded_from: int | None = None  # set when added as an adjacent chunk
+    expanded_from: int | None = None
     rerank_score: float | None = None
 
 
@@ -39,6 +37,10 @@ class Source(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     refused: bool
-    refusal_reason: str | None = None  # "gate" | "llm" | "grounding" | "quote_check"
+    refusal_reason: str | None = None
+    supporting_quote: str | None = None
     sources: list[Source] = []
+    gate_score: float | None = None
+    unsupported_tokens: list[str] = []
     latency_ms: dict[str, float] = {}
+    trace: dict | None = None

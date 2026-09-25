@@ -1,8 +1,3 @@
-"""Build the FAISS + BM25 + SQLite index from knowledge_base/ (fully offline).
-
-    uv run scripts/ingest.py
-"""
-
 import json
 import sys
 from pathlib import Path

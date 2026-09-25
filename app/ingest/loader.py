@@ -1,5 +1,3 @@
-"""Corpus + eval-set loading shared by ingest, benchmarks and evaluation."""
-
 import csv
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,7 +21,7 @@ class EvalQuery:
     expected_answer: str
     is_answerable: bool
     source_doc: str | None
-    probe: str = "official"  # supplementary set: paraphrase | exact_token | trap
+    probe: str = "official"
 
 
 def load_eval_queries(csv_path: Path) -> list[EvalQuery]:

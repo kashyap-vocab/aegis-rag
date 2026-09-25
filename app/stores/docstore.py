@@ -1,11 +1,3 @@
-"""SQLite docstore (D4): chunk text + metadata, and index provenance.
-
-FAISS stores only vectors; this holds everything else. SQLite is in the Python
-standard library, a single file, and needs no server (R1, R5). The ``meta``
-table records which embedder built the index so the API can refuse to serve a
-stale or mismatched index.
-"""
-
 import json
 import sqlite3
 from pathlib import Path
@@ -36,7 +28,6 @@ _COLS = "id, chunk_id, doc_id, sop_number, title, section, chunk_idx, text, embe
 class DocStore:
     def __init__(self, path: Path, read_only: bool = False):
         uri = f"file:{path.as_posix()}{'?mode=ro' if read_only else ''}"
-        # FastAPI may call from worker threads; access is read-only at serve time.
         self.conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
         if not read_only:
             self.conn.executescript(_SCHEMA)

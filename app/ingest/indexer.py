@@ -1,13 +1,3 @@
-"""Build all three index artifacts from the knowledge base (D4, D6).
-
-    knowledge_base/*.md -> chunks -> SQLite docstore (text + metadata)
-                                  -> FAISS (dense, bge embeddings)
-                                  -> bm25s (sparse, domain tokenizer)
-
-The build goes to a temp directory and is swapped in only when complete, so a
-crashed or partial ingest never leaves a half-written index behind a live API.
-"""
-
 import hashlib
 import shutil
 import time

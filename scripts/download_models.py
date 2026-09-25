@@ -1,12 +1,3 @@
-"""The ONLY step that needs network access (R1).
-
-Downloads the embedder and reranker into ./models, exports ONNX if the repo
-doesn't ship it, builds int8 dynamically-quantized variants, and writes a
-SHA-256 manifest so the air-gapped side can verify integrity after transfer.
-
-    uv run scripts/download_models.py
-"""
-
 import argparse
 import hashlib
 import json
@@ -21,7 +12,6 @@ from sentence_transformers.backend import export_dynamic_quantized_onnx_model
 
 from app.config import get_settings
 
-# Weights we never load: skip them to keep the offline bundle small.
 IGNORE = ["*.h5", "*.msgpack", "*.ot", "*.onnx_data", "onnx/*", "openvino/*", "*.bin"]
 
 

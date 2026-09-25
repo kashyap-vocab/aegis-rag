@@ -1,21 +1,11 @@
-"""Dense embedder (D3): bge-small-en-v1.5 via sentence-transformers, optimised.
-
-Loads strictly from the local ``models/`` directory — never from the network —
-so the same code runs in Docker, on Kaggle with internet off, or air-gapped.
-
-Speed levers (all config-driven): ONNX Runtime backend, int8 dynamic
-quantization, capped sequence length, thread count, provider selection, and an
-LRU cache for repeated queries.
-"""
-
 from functools import lru_cache
 from typing import Literal
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 from app.config import Settings
-from app.models.runtime import resolve_threads, select_providers
+from app.models.ort_session import OrtModel
+from app.models.runtime import resolve_threads
 
 Variant = Literal["torch-fp32", "onnx-fp32", "onnx-int8"]
 
@@ -26,63 +16,50 @@ def default_variant(settings: Settings) -> Variant:
     return "onnx-int8" if settings.embed_quantized else "onnx-fp32"
 
 
-def load_sentence_transformer(settings: Settings, variant: Variant) -> SentenceTransformer:
-    path = settings.local_model_dir(settings.embed_model)
-    if not path.exists():
-        raise FileNotFoundError(f"{path} missing — run `uv run scripts/download_models.py` first")
-    threads = resolve_threads(settings.num_threads)
-
-    if variant == "torch-fp32":
-        import torch
-
-        torch.set_num_threads(threads)
-        return SentenceTransformer(str(path), backend="torch", device="cpu", local_files_only=True)
-
-    import onnxruntime as ort
-
-    opts = ort.SessionOptions()
-    opts.intra_op_num_threads = threads
-    opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-    return SentenceTransformer(
-        str(path),
-        backend="onnx",
-        local_files_only=True,
-        model_kwargs={
-            "file_name": settings.onnx_file(quantized=variant == "onnx-int8"),
-            "provider": select_providers(settings.device)[0],
-            "session_options": opts,
-        },
-    )
-
-
 class Embedder:
     def __init__(self, settings: Settings, variant: Variant | None = None):
         self.settings = settings
         self.variant = variant or default_variant(settings)
-        self.model = load_sentence_transformer(settings, self.variant)
-        self.model.max_seq_length = settings.embed_max_seq_length
-        self.dim = self.model.get_embedding_dimension()
+        path = settings.local_model_dir(settings.embed_model)
+        if not path.exists():
+            raise FileNotFoundError(f"{path} missing — run `uv run scripts/download_models.py` first")
+
+        if self.variant == "torch-fp32":
+            import torch
+            from sentence_transformers import SentenceTransformer
+
+            torch.set_num_threads(resolve_threads(settings.num_threads))
+            self._st = SentenceTransformer(str(path), backend="torch", device="cpu", local_files_only=True)
+            self._st.max_seq_length = settings.embed_max_seq_length
+            self._ort = None
+            self.dim = self._st[0].auto_model.config.hidden_size
+        else:
+            self._st = None
+            self._ort = OrtModel(
+                path, settings.onnx_file(quantized=self.variant == "onnx-int8"),
+                settings.device, settings.num_threads, settings.embed_max_seq_length,
+            )
+            self.dim = int(self._ort.session.get_outputs()[0].shape[-1])
         self._cached_query = lru_cache(maxsize=settings.query_cache_size)(self._encode_query)
 
+    def _encode(self, texts: list[str]) -> np.ndarray:
+        if self._st is not None:
+            vecs = self._st.encode(texts, batch_size=self.settings.embed_batch_size, normalize_embeddings=True,
+                                   convert_to_numpy=True, show_progress_bar=False)
+            return vecs.astype(np.float32)
+        out = []
+        bs = self.settings.embed_batch_size
+        for i in range(0, len(texts), bs):
+            cls = self._ort.run(texts[i : i + bs])[:, 0, :]
+            out.append(cls / np.linalg.norm(cls, axis=1, keepdims=True))
+        return np.vstack(out).astype(np.float32)
+
     def encode_passages(self, texts: list[str]) -> np.ndarray:
-        # bge-v1.5: passages get no instruction prefix.
-        return self.model.encode(
-            texts,
-            batch_size=self.settings.embed_batch_size,
-            normalize_embeddings=True,  # cosine == inner product -> FAISS IndexFlatIP
-            convert_to_numpy=True,
-            show_progress_bar=False,
-        ).astype(np.float32)
+        return self._encode(texts)
 
     def _encode_query(self, text: str) -> np.ndarray:
-        vec = self.model.encode(
-            [self.settings.embed_query_prefix + text],
-            normalize_embeddings=True,
-            convert_to_numpy=True,
-            show_progress_bar=False,
-        )
-        vec = vec.astype(np.float32)
-        vec.setflags(write=False)  # cached arrays are shared; keep them immutable
+        vec = self._encode([self.settings.embed_query_prefix + text])
+        vec.setflags(write=False)
         return vec
 
     def encode_query(self, text: str, use_cache: bool = True) -> np.ndarray:

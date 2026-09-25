@@ -1,10 +1,3 @@
-"""Central configuration (D2).
-
-Every tunable lives here and can be overridden with an ``AEGIS_`` env var
-(e.g. ``AEGIS_RERANK_THRESHOLD=0.4``) so moving between hardware profiles or
-deployment targets is a config change, never a code change.
-"""
-
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -17,77 +10,66 @@ ROOT = Path(__file__).resolve().parent.parent
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="AEGIS_", env_file=".env", extra="ignore")
 
-    # --- Paths -------------------------------------------------------------
     knowledge_base_dir: Path = ROOT / "knowledge_base"
     index_dir: Path = ROOT / "data" / "index"
     models_dir: Path = ROOT / "models"
     eval_csv: Path = ROOT / "evaluation_queries.csv"
-    results_dir: Path = ROOT / "docs" / "results"  # versioned bench/eval outputs for the writeup
-    supplementary_eval_csv: Path = ROOT / "eval" / "supplementary_queries.csv"  # ours, not official
+    results_dir: Path = ROOT / "docs" / "results"
+    supplementary_eval_csv: Path = ROOT / "eval" / "supplementary_queries.csv"
 
-    # --- Runtime / hardware (D2) -------------------------------------------
-    # "auto" picks the best available ONNX Runtime provider at startup.
     device: Literal["auto", "cuda", "dml", "openvino", "cpu"] = "auto"
-    num_threads: int = 0  # 0 = physical core count
+    num_threads: int = 0
 
-    # --- Chunking (D6) -----------------------------------------------------
     chunk_max_tokens: int = 200
     chunk_overlap_sentences: int = 0
 
-    # --- Embeddings (D3) ---------------------------------------------------
     embed_model: str = "BAAI/bge-small-en-v1.5"
     embed_backend: Literal["torch", "onnx", "openvino"] = "onnx"
-    embed_quantized: bool = True  # int8; kept only if bench shows no hit@1 drop
-    # Instruction set the int8 kernels target. avx2 runs on any x86-64 from ~2013;
-    # avx512_vnni is faster on newer Xeons; arm64 for Graviton/Apple/Jetson.
+    embed_quantized: bool = True
     quant_config: Literal["avx2", "avx512", "avx512_vnni", "arm64"] = "avx2"
     embed_max_seq_length: int = 256
     embed_batch_size: int = 32
     embed_query_prefix: str = "Represent this sentence for searching relevant passages: "
     query_cache_size: int = 1024
 
-    # --- Retrieval (D4) ----------------------------------------------------
-    faiss_index_type: Literal["flat", "hnsw"] = "flat"  # flat = exact; hnsw past ~100k vectors
+    faiss_index_type: Literal["flat", "hnsw"] = "flat"
     dense_top_k: int = 10
     sparse_top_k: int = 10
-    rrf_k: int = 60  # standard RRF constant (Cormack et al., 2009)
-    fusion_top_k: int = 5  # fused candidates kept before adjacent expansion
-    expand_neighbors: int = 1  # ±n chunks from the same document
+    rrf_k: int = 60
+    fusion_top_k: int = 5
+    expand_neighbors: int = 1
 
-    # --- Reranking + gate (D5, D8) ------------------------------------------
     rerank_model: str = "BAAI/bge-reranker-base"
-    # fp32: int8 drifted scores by up to 0.19 and pushed traps upward (bench_reranker.py),
-    # which breaks the gate calibration. Embedder int8 is fine; reranker int8 is not.
     rerank_quantized: bool = False
-    rerank_max_length: int = 512  # query + chunk tokens; SOP chunks are far shorter
+    rerank_max_length: int = 512
     rerank_top_n: int = 3
-    # τ: plateau 0.005-0.0125 gives 0/14 answerable refused, 2/6 traps refused
-    # (scripts/calibrate_gate.py); 0.0075 = log-midpoint. Deliberately low: a false
-    # refusal here is unrecoverable, a trap that passes still meets later layers.
     rerank_threshold: float = 0.0075
 
-    # --- Generation (D0) ---------------------------------------------------
-    # ollama -> Docker deployment; transformers -> Kaggle notebook (internet off);
-    # openai_compat -> vLLM on a GPU server; stub -> no LLM (extractive baseline).
     llm_provider: Literal["stub", "ollama", "openai_compat", "transformers"] = "stub"
     llm_base_url: str = "http://localhost:11434"
-    llm_model: str = "qwen2.5:3b-instruct-q4_K_M"  # HF id or local path when provider=transformers
+    llm_model: str = "qwen2.5:3b-instruct-q4_K_M"
     llm_device: Literal["auto", "cpu", "cuda"] = "auto"
+    llm_dtype: Literal["auto", "float32", "bfloat16", "float16"] = "auto"
     llm_temperature: float = 0.0
     llm_seed: int = 42
     llm_num_ctx: int = 4096
     llm_timeout_s: float = 120.0
+    llm_max_tokens: int = 256
+    llm_keep_alive: str = "30m"
+    llm_fallback_model: str = ""
+    llm_api_key: str = "not-needed"
 
     refusal_message: str = "Not found in documents."
+    max_question_chars: int = 1000
+    refuse_on_injection: bool = True
+    gate_enabled: bool = True
+    quote_check_enabled: bool = True
+    grounding_enabled: bool = True
 
-    # --- Observability (D11) -----------------------------------------------
-    otel_enabled: bool = False
-    otel_endpoint: str = "http://localhost:6006/v1/traces"
     log_level: str = "INFO"
     log_json: bool = True
 
     def local_model_dir(self, repo_id: str) -> Path:
-        """Where download_models.py places a HF repo; runtime loads only from here."""
         return self.models_dir / repo_id.split("/")[-1]
 
     def onnx_file(self, quantized: bool) -> str:

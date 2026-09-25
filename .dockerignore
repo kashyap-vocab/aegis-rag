@@ -8,3 +8,5 @@ __pycache__/
 tests/
 docs/
 .git/
+notebooks/
+observability/

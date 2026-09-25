@@ -1,13 +1,3 @@
-"""Sweep the retrieval-gate threshold τ over saved reranker scores (D8).
-
-Reads docs/results/reranker.json (from bench_reranker.py) — no models needed.
-For each τ: how many answerable queries would be wrongly refused (unrecoverable:
-the LLM never sees them) vs. how many traps are refused before the LLM (a
-trap that passes still meets the downstream grounding layers).
-
-    uv run scripts/calibrate_gate.py [--model "bge-reranker-base|onnx-fp32"]
-"""
-
 import argparse
 import json
 import sys

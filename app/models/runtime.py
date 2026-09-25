@@ -1,9 +1,3 @@
-"""Hardware detection (D2): pick the best ONNX Runtime execution provider.
-
-No hardware is assumed. We ask ONNX Runtime what is available and fall back
-along a fixed preference order, always ending on CPU.
-"""
-
 import os
 
 import onnxruntime as ort
@@ -22,7 +16,6 @@ def available_providers() -> list[str]:
 
 
 def select_providers(device: str = "auto") -> list[str]:
-    """Return an ordered provider list for ONNX Runtime sessions."""
     available = set(available_providers())
     order = _AUTO_ORDER if device == "auto" else [device, "cpu"]
     chosen = [_PREFERENCE[d] for d in order if _PREFERENCE[d] in available]
@@ -32,7 +25,6 @@ def select_providers(device: str = "auto") -> list[str]:
 
 
 def resolve_threads(num_threads: int) -> int:
-    """0 means 'physical cores' — hyperthreads rarely help matmul-bound inference."""
     if num_threads > 0:
         return num_threads
     logical = os.cpu_count() or 1

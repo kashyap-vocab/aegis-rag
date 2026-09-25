@@ -1,10 +1,3 @@
-"""Markdown SOP parser (D6).
-
-Turns a Markdown file into a ``ParsedDoc``: the H1 title plus an ordered list of
-H2/H3 sections with their body text. Purely structural and deterministic — no
-LLM, no network — so re-ingesting the same file always yields the same output.
-"""
-
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -55,7 +48,7 @@ def parse_markdown(text: str, doc_id: str) -> ParsedDoc:
             continue
         hashes, name = m.groups()
         if len(hashes) == 1:
-            title = name  # H1 is the document title, not a section
+            title = name
             continue
         flush()
         heading, level, buf = name, len(hashes), []

@@ -1,10 +1,3 @@
-"""BM25 sparse store (D4, R3) using ``bm25s`` with our domain tokenizer.
-
-Dense embeddings are good at paraphrase ("heat limit" ~ "thermal threshold")
-but weak at exact identifiers; BM25 over the domain tokenizer catches
-``Alpha-7-Tango`` / ``14.5`` / ``RDR_CAL_INIT`` literally. RRF fuses both.
-"""
-
 import json
 from pathlib import Path
 
@@ -27,7 +20,6 @@ class BM25Store:
         return store
 
     def add(self, ids: list[int], token_lists: list[list[str]]) -> None:
-        # bm25s builds its index in one shot; the corpus is (re)indexed as a whole.
         self.ids = list(ids)
         self.retriever.index(token_lists, show_progress=False)
 
@@ -35,8 +27,7 @@ class BM25Store:
         k = min(k, len(self.ids))
         if not query_tokens or k == 0:
             return []
-        docs, scores = self.retriever.retrieve([query_tokens], k=k, show_progress=False)
-        # bm25s pads with zero-score docs; a zero score means no term overlap at all.
+        docs, scores = self.retriever.retrieve([query_tokens], k=k, show_progress=False, backend_selection="numpy")
         return [(self.ids[int(d)], float(s)) for d, s in zip(docs[0], scores[0]) if s > 0]
 
     def save(self, directory: Path) -> None:

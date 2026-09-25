@@ -1,9 +1,3 @@
-"""Store interfaces (D4, D10).
-
-Thin protocols instead of a framework: FAISS/bm25s today, Qdrant or another
-engine later, without touching retrieval code.
-"""
-
 from pathlib import Path
 from typing import Protocol
 

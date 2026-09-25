@@ -1,16 +1,3 @@
-"""Benchmark rerankers (D5) and measure their value as a refusal signal (D8).
-
-For every (model, variant) the *same* hybrid candidates are reranked, over the
-official + supplementary query sets. Reported:
-  accuracy   hit@1 / MRR (doc of top reranked chunk, answerable queries)
-  speed      load time, per-query rerank latency p50 / p95
-  fidelity   max |score - torch-fp32 score| of the same model (quantization drift)
-  gate value top-score AUROC answerable-vs-trap, min answerable top score,
-             per-trap top scores (can a threshold refuse them?)
-
-    uv run scripts/bench_reranker.py [--runs 5]
-"""
-
 import argparse
 import json
 import statistics
@@ -34,7 +21,6 @@ VARIANTS = ["torch-fp32", "onnx-fp32", "onnx-int8"]
 
 
 def auroc(pos: list[float], neg: list[float]) -> float:
-    """P(random answerable top score > random trap top score); ties count half."""
     wins = sum((p > n) + 0.5 * (p == n) for p in pos for n in neg)
     return wins / (len(pos) * len(neg))
 
@@ -60,7 +46,7 @@ def main() -> None:
             rr = Reranker(s, model=model, variant=variant)
             load_s = time.perf_counter() - t0
 
-            rr.rerank(queries[0].question, candidates[queries[0].query_id])  # warm-up
+            rr.rerank(queries[0].question, candidates[queries[0].query_id])
             lat, hits, rrs, top_scores, all_scores = [], [], [], {}, {}
             for q in queries:
                 cands = candidates[q.query_id]
@@ -109,7 +95,6 @@ def main() -> None:
     for r in results:
         print("| " + " | ".join(str(r[c]) for c in cols) + " |")
 
-    # Per-query top scores, one column per model (fp32 onnx + int8 onnx) for readability.
     shown = [r["model"] for r in results if "onnx" in r["model"]]
     table = {}
     for row in per_query:

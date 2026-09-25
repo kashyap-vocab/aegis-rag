@@ -1,13 +1,3 @@
-"""Retrieval ablation (D4): dense-only vs BM25-only vs hybrid (RRF).
-
-Reports, per query set (official / supplementary):
-  hit@1, hit@3 (doc-level), MRR — answerable queries only
-and a per-query table incl. trap queries, so we can see *what* each retriever
-returns for questions the corpus can't answer (input for the refusal design).
-
-    uv run scripts/eval_retrieval.py
-"""
-
 import json
 import sys
 from pathlib import Path

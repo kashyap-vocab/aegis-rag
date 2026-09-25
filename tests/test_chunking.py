@@ -15,8 +15,6 @@ def chunks_by_doc():
     return {p.name: chunk_document(parse_file(p)) for p in sorted(KB.glob("*.md"))}
 
 
-# --- parser -----------------------------------------------------------------
-
 def test_parser_title_sections_and_sop_number():
     doc = parse_file(KB / "SOP_002_Cooling_System.md")
     assert doc.title == "SOP 002: Main Engine Cooling System"
@@ -28,8 +26,6 @@ def test_parser_ignores_headings_inside_code_blocks():
     doc = parse_markdown("# T\n## A\n```\n## not a heading\n```\ntext", "x.md")
     assert [s.heading for s in doc.sections] == ["A"]
 
-
-# --- chunker ----------------------------------------------------------------
 
 def test_every_doc_produces_chunks(chunks_by_doc):
     assert len(chunks_by_doc) == 3
@@ -62,17 +58,14 @@ def test_answer_facts_survive_chunking_intact(chunks_by_doc, doc_id, fact):
 
 
 def test_override_code_shares_chunk_with_throttling_context(chunks_by_doc):
-    # Query 4 asks about "override ... throttling": code and context must co-locate.
     chunk = next(c for c in chunks_by_doc["SOP_002_Cooling_System.md"] if "Alpha-7-Tango" in c.text)
     assert "throttling" in chunk.text
 
 
 def test_small_budget_splits_on_steps_and_keeps_continuations():
-    # Budget fits step 3 but not the whole Procedure section.
     doc = parse_file(KB / "SOP_001_Radar_Calibration.md")
     chunks = chunk_document(doc, max_tokens=40)
     step3 = next(c for c in chunks if "RDR_CAL_INIT" in c.text)
-    # The unnumbered "If voltage exceeds 5.0V" line belongs to step 3.
     assert "exceeds 5.0V" in step3.text
     assert len(chunks) > len(doc.sections)
     assert all(not c.text.lstrip().startswith("If voltage") for c in chunks)
@@ -86,8 +79,6 @@ def test_oversized_step_splits_on_sentences_without_orphaning_marker():
     assert all(t.strip() not in {"3.", "3"} for t in texts)
     assert any("4.5V and 4.8V" in t for t in texts)
 
-
-# --- tokenizer --------------------------------------------------------------
 
 @pytest.mark.parametrize(
     "text, expected",
