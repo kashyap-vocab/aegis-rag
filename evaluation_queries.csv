@@ -1,0 +1,7 @@
+query_id,question,expected_answer,is_answerable,source_doc
+1,What is the acceptable voltage range during radar calibration?,Between 4.5V and 4.8V.,True,SOP_001_Radar_Calibration.md
+2,At what temperature does the automated throttling system engage?,92°C.,True,SOP_002_Cooling_System.md
+3,Which HF band is used for comms failover?,14.5 MHz.,True,SOP_003_Comms_Protocol.md
+4,What is the authorization code to override the automated throttling?,Alpha-7-Tango.,True,SOP_002_Cooling_System.md
+5,What is the maximum range of the Mark-IV Radar in bad weather?,Not found in documents.,False,None
+6,Who is the manufacturer of the Type-C Marine coolant?,Not found in documents.,False,None
