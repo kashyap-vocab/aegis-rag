@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     index_dir: Path = ROOT / "data" / "index"
     models_dir: Path = ROOT / "models"
     eval_csv: Path = ROOT / "evaluation_queries.csv"
+    results_dir: Path = ROOT / "docs" / "results"  # versioned bench/eval outputs for the writeup
+    supplementary_eval_csv: Path = ROOT / "eval" / "supplementary_queries.csv"  # ours, not official
 
     # --- Runtime / hardware (D2) -------------------------------------------
     # "auto" picks the best available ONNX Runtime provider at startup.
@@ -36,16 +38,21 @@ class Settings(BaseSettings):
     embed_model: str = "BAAI/bge-small-en-v1.5"
     embed_backend: Literal["torch", "onnx", "openvino"] = "onnx"
     embed_quantized: bool = True  # int8; kept only if bench shows no hit@1 drop
+    # Instruction set the int8 kernels target. avx2 runs on any x86-64 from ~2013;
+    # avx512_vnni is faster on newer Xeons; arm64 for Graviton/Apple/Jetson.
+    quant_config: Literal["avx2", "avx512", "avx512_vnni", "arm64"] = "avx2"
     embed_max_seq_length: int = 256
     embed_batch_size: int = 32
     embed_query_prefix: str = "Represent this sentence for searching relevant passages: "
     query_cache_size: int = 1024
 
     # --- Retrieval (D4) ----------------------------------------------------
+    faiss_index_type: Literal["flat", "hnsw"] = "flat"  # flat = exact; hnsw past ~100k vectors
     dense_top_k: int = 10
     sparse_top_k: int = 10
-    rrf_k: int = 60
-    expand_neighbors: int = 1
+    rrf_k: int = 60  # standard RRF constant (Cormack et al., 2009)
+    fusion_top_k: int = 5  # fused candidates kept before adjacent expansion
+    expand_neighbors: int = 1  # ±n chunks from the same document
 
     # --- Reranking + gate (D5, D8) ------------------------------------------
     rerank_model: str = "BAAI/bge-reranker-base"
@@ -71,6 +78,13 @@ class Settings(BaseSettings):
     otel_endpoint: str = "http://localhost:6006/v1/traces"
     log_level: str = "INFO"
     log_json: bool = True
+
+    def local_model_dir(self, repo_id: str) -> Path:
+        """Where download_models.py places a HF repo; runtime loads only from here."""
+        return self.models_dir / repo_id.split("/")[-1]
+
+    def onnx_file(self, quantized: bool) -> str:
+        return f"onnx/model_quint8_{self.quant_config}.onnx" if quantized else "onnx/model.onnx"
 
 
 @lru_cache

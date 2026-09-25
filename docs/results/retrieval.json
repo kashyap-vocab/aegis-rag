@@ -1,0 +1,286 @@
+{
+  "sets": {
+    "official": {
+      "dense": {
+        "n": 4,
+        "hit@1": "4/4",
+        "hit@3": "4/4",
+        "mrr": 1.0
+      },
+      "bm25": {
+        "n": 4,
+        "hit@1": "4/4",
+        "hit@3": "4/4",
+        "mrr": 1.0
+      },
+      "hybrid": {
+        "n": 4,
+        "hit@1": "4/4",
+        "hit@3": "4/4",
+        "mrr": 1.0
+      }
+    },
+    "supplementary": {
+      "dense": {
+        "n": 10,
+        "hit@1": "10/10",
+        "hit@3": "10/10",
+        "mrr": 1.0
+      },
+      "bm25": {
+        "n": 10,
+        "hit@1": "9/10",
+        "hit@3": "9/10",
+        "mrr": 0.9
+      },
+      "hybrid": {
+        "n": 10,
+        "hit@1": "10/10",
+        "hit@3": "10/10",
+        "mrr": 1.0
+      }
+    }
+  },
+  "queries": [
+    {
+      "set": "official",
+      "id": "1",
+      "probe": "official",
+      "answerable": true,
+      "expected": "SOP_001_Radar_Calibration.md",
+      "dense_top1": "SOP_001_Radar_Calibration.md",
+      "bm25_top1": "SOP_001_Radar_Calibration.md",
+      "hybrid_top1": "SOP_001_Radar_Calibration.md",
+      "dense_top_cos": 0.797,
+      "bm25_top_score": 1.204
+    },
+    {
+      "set": "official",
+      "id": "2",
+      "probe": "official",
+      "answerable": true,
+      "expected": "SOP_002_Cooling_System.md",
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.734,
+      "bm25_top_score": 2.403
+    },
+    {
+      "set": "official",
+      "id": "3",
+      "probe": "official",
+      "answerable": true,
+      "expected": "SOP_003_Comms_Protocol.md",
+      "dense_top1": "SOP_003_Comms_Protocol.md",
+      "bm25_top1": "SOP_003_Comms_Protocol.md",
+      "hybrid_top1": "SOP_003_Comms_Protocol.md",
+      "dense_top_cos": 0.588,
+      "bm25_top_score": 1.467
+    },
+    {
+      "set": "official",
+      "id": "4",
+      "probe": "official",
+      "answerable": true,
+      "expected": "SOP_002_Cooling_System.md",
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.6,
+      "bm25_top_score": 2.796
+    },
+    {
+      "set": "official",
+      "id": "5",
+      "probe": "official",
+      "answerable": false,
+      "expected": null,
+      "dense_top1": "SOP_001_Radar_Calibration.md",
+      "bm25_top1": "SOP_001_Radar_Calibration.md",
+      "hybrid_top1": "SOP_001_Radar_Calibration.md",
+      "dense_top_cos": 0.682,
+      "bm25_top_score": 2.78
+    },
+    {
+      "set": "official",
+      "id": "6",
+      "probe": "official",
+      "answerable": false,
+      "expected": null,
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.728,
+      "bm25_top_score": 3.379
+    },
+    {
+      "set": "supplementary",
+      "id": "S1",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_002_Cooling_System.md",
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.684,
+      "bm25_top_score": 0.427
+    },
+    {
+      "set": "supplementary",
+      "id": "S2",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_002_Cooling_System.md",
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.794,
+      "bm25_top_score": 0.676
+    },
+    {
+      "set": "supplementary",
+      "id": "S3",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_003_Comms_Protocol.md",
+      "dense_top1": "SOP_003_Comms_Protocol.md",
+      "bm25_top1": "SOP_003_Comms_Protocol.md",
+      "hybrid_top1": "SOP_003_Comms_Protocol.md",
+      "dense_top_cos": 0.712,
+      "bm25_top_score": 0.489
+    },
+    {
+      "set": "supplementary",
+      "id": "S4",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_003_Comms_Protocol.md",
+      "dense_top1": "SOP_003_Comms_Protocol.md",
+      "bm25_top1": "SOP_003_Comms_Protocol.md",
+      "hybrid_top1": "SOP_003_Comms_Protocol.md",
+      "dense_top_cos": 0.616,
+      "bm25_top_score": 0.978
+    },
+    {
+      "set": "supplementary",
+      "id": "S5",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_001_Radar_Calibration.md",
+      "dense_top1": "SOP_001_Radar_Calibration.md",
+      "bm25_top1": null,
+      "hybrid_top1": "SOP_001_Radar_Calibration.md",
+      "dense_top_cos": 0.591,
+      "bm25_top_score": null
+    },
+    {
+      "set": "supplementary",
+      "id": "S6",
+      "probe": "exact_token",
+      "answerable": true,
+      "expected": "SOP_001_Radar_Calibration.md",
+      "dense_top1": "SOP_001_Radar_Calibration.md",
+      "bm25_top1": "SOP_001_Radar_Calibration.md",
+      "hybrid_top1": "SOP_001_Radar_Calibration.md",
+      "dense_top_cos": 0.699,
+      "bm25_top_score": 1.719
+    },
+    {
+      "set": "supplementary",
+      "id": "S7",
+      "probe": "exact_token",
+      "answerable": true,
+      "expected": "SOP_002_Cooling_System.md",
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.522,
+      "bm25_top_score": 2.237
+    },
+    {
+      "set": "supplementary",
+      "id": "S8",
+      "probe": "exact_token",
+      "answerable": true,
+      "expected": "SOP_001_Radar_Calibration.md",
+      "dense_top1": "SOP_001_Radar_Calibration.md",
+      "bm25_top1": "SOP_001_Radar_Calibration.md",
+      "hybrid_top1": "SOP_001_Radar_Calibration.md",
+      "dense_top_cos": 0.571,
+      "bm25_top_score": 1.131
+    },
+    {
+      "set": "supplementary",
+      "id": "S9",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_003_Comms_Protocol.md",
+      "dense_top1": "SOP_003_Comms_Protocol.md",
+      "bm25_top1": "SOP_003_Comms_Protocol.md",
+      "hybrid_top1": "SOP_003_Comms_Protocol.md",
+      "dense_top_cos": 0.708,
+      "bm25_top_score": 2.19
+    },
+    {
+      "set": "supplementary",
+      "id": "S10",
+      "probe": "paraphrase",
+      "answerable": true,
+      "expected": "SOP_002_Cooling_System.md",
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.827,
+      "bm25_top_score": 2.031
+    },
+    {
+      "set": "supplementary",
+      "id": "S11",
+      "probe": "trap",
+      "answerable": false,
+      "expected": null,
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": "SOP_002_Cooling_System.md",
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.747,
+      "bm25_top_score": 3.379
+    },
+    {
+      "set": "supplementary",
+      "id": "S12",
+      "probe": "trap",
+      "answerable": false,
+      "expected": null,
+      "dense_top1": "SOP_001_Radar_Calibration.md",
+      "bm25_top1": "SOP_001_Radar_Calibration.md",
+      "hybrid_top1": "SOP_001_Radar_Calibration.md",
+      "dense_top_cos": 0.682,
+      "bm25_top_score": 2.78
+    },
+    {
+      "set": "supplementary",
+      "id": "S13",
+      "probe": "trap",
+      "answerable": false,
+      "expected": null,
+      "dense_top1": "SOP_003_Comms_Protocol.md",
+      "bm25_top1": "SOP_003_Comms_Protocol.md",
+      "hybrid_top1": "SOP_003_Comms_Protocol.md",
+      "dense_top_cos": 0.67,
+      "bm25_top_score": 2.19
+    },
+    {
+      "set": "supplementary",
+      "id": "S14",
+      "probe": "trap",
+      "answerable": false,
+      "expected": null,
+      "dense_top1": "SOP_002_Cooling_System.md",
+      "bm25_top1": null,
+      "hybrid_top1": "SOP_002_Cooling_System.md",
+      "dense_top_cos": 0.565,
+      "bm25_top_score": null
+    }
+  ]
+}

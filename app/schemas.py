@@ -15,8 +15,14 @@ class Chunk(BaseModel):
 
 
 class RetrievedChunk(BaseModel):
+    id: int  # docstore row id
     chunk: Chunk
     rrf_score: float = 0.0
+    dense_rank: int | None = None  # 1-based; None = not in that retriever's top-k
+    dense_score: float | None = None
+    sparse_rank: int | None = None
+    sparse_score: float | None = None
+    expanded_from: int | None = None  # set when added as an adjacent chunk
     rerank_score: float | None = None
 
 

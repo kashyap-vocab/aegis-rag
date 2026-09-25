@@ -1,0 +1,15 @@
+query_id,question,expected_answer,is_answerable,source_doc,probe
+S1,What's the heat limit before the engine gets throttled back?,92°C.,True,SOP_002_Cooling_System.md,paraphrase
+S2,How often should the coolant be changed?,Every 5000 operational hours.,True,SOP_002_Cooling_System.md,paraphrase
+S3,Which cipher protects outgoing tactical traffic?,AES-256.,True,SOP_003_Comms_Protocol.md,paraphrase
+S4,What happens if the satellite link drops?,Failover to HF band 14.5 MHz.,True,SOP_003_Comms_Protocol.md,paraphrase
+S5,What should I do if the reading goes above 5 volts?,Initiate emergency shutdown and replace the capacitator board.,True,SOP_001_Radar_Calibration.md,paraphrase
+S6,RDR_CAL_INIT,Command run during radar calibration step 3.,True,SOP_001_Radar_Calibration.md,exact_token
+S7,Alpha-7-Tango,Authorization code for manual override of throttling.,True,SOP_002_Cooling_System.md,exact_token
+S8,Which port is the diagnostic terminal connected through?,RS-232.,True,SOP_001_Radar_Calibration.md,exact_token
+S9,When is the daily cryptographic key retrieved?,00:00 GMT.,True,SOP_003_Comms_Protocol.md,paraphrase
+S10,What is the standard operating temperature of the engine?,75°C.,True,SOP_002_Cooling_System.md,paraphrase
+S11,What is the boiling point of Type-C Marine coolant?,Not found in documents.,False,None,trap
+S12,What frequency does the Mark-IV radar transmit on?,Not found in documents.,False,None,trap
+S13,Who approves the AES-256 key rotation policy?,Not found in documents.,False,None,trap
+S14,What is the recommended tyre pressure for the support vehicle?,Not found in documents.,False,None,trap

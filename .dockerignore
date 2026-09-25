@@ -2,8 +2,8 @@
 __pycache__/
 *.pyc
 .pytest_cache/
-models/
-data/
+/models/
+/data/
 *.tar.gz
 tests/
 docs/
