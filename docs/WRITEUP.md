@@ -13,7 +13,7 @@ A fully offline Retrieval-Augmented Generation system that answers questions abo
 | False refusals of answerable questions | **0 / 4** | **0 / 10** |
 | Retrieval hit@1 (correct source doc ranked first) | **4 / 4** | **10 / 10** |
 
-The supplementary set is ours (paraphrases, exact-code queries, extra traps), built to stress what the official set can't. Both "misses" on it are keyword-only probes (`RDR_CAL_INIT`, `Alpha-7-Tango`) with vague reference answers; the model's answers to them are correct (§6.3).
+The supplementary set is ours (paraphrases, exact-code queries, extra traps), built to stress what the official set can't. Both "misses" on it are keyword-only probes (`RDR_CAL_INIT`, `Alpha-7-Tango`) whose descriptive reference answers the automatic scorer can't match to the model's short answers (§6.3). A 100-query held-out evaluation is in §6.5.
 
 ---
 
@@ -50,7 +50,7 @@ Every refusal returns the same message, `Not found in documents.`, and records w
 | Reranker | `BAAI/bge-reranker-base` cross-encoder, ONNX fp32 | Best trap/answer separation of the candidates tested (AUROC 0.917); its score drives the refusal gate |
 | LLM | **Qwen2.5-3B-Instruct** (Ollama Q4_K_M locally; `transformers` / PyTorch on Kaggle) | Reliable instruction and JSON following at a size that fits edge hardware; 1.5B is 2× faster but less accurate (§6.2) |
 | Serving | FastAPI + Prometheus + structlog, Docker Compose | Deployable on-prem as-is: health checks, hot re-ingest, metrics, JSON logs |
-| Packaging | `uv` lockfile, offline wheel bundle, model SHA-256 manifest | Byte-reproducible builds and verifiable artifacts for air-gapped transfer |
+| Packaging | `uv` lockfile, offline wheel bundle, model SHA-256 manifest | Reproducible, pinned builds and verifiable artifacts for air-gapped transfer |
 
 ### Why LangGraph, and how much of it
 
@@ -171,7 +171,7 @@ The dev machine is a laptop with a Ryzen 5 5500U, CPU only, 6 threads, fully off
 - **int8 is right for the embedder but wrong for the reranker.** It shifts reranker scores by up to 0.19 and pushes traps *upward*, which damages the very score the gate thresholds.
 - **MiniLM is 6× faster but a worse refusal signal.** It stays available as a low-latency profile (`AEGIS_RERANK_MODEL`, with τ re-calibrated).
 
-**ONNX Runtime without `optimum`.** The embedder and reranker run through a ~40-line direct ONNX Runtime wrapper (tokenizer, session, CLS pooling or logits). Its output is numerically identical to PyTorch (cosine 1.00000; reranker scores identical to 4 d.p.). It drops a heavy dependency and version-coupling risk, and runs unchanged on CPU, CUDA, DirectML and OpenVINO execution providers, chosen at runtime.
+**ONNX Runtime without `optimum`.** The embedder and reranker run through a ~40-line direct ONNX Runtime wrapper (tokenizer, session, CLS pooling or logits). Its output is numerically identical to PyTorch (cosine 1.00000; reranker scores identical to 4 d.p.). It drops a heavy dependency and version-coupling risk, and the ONNX execution provider (CPU, CUDA, DirectML or OpenVINO) is chosen at runtime from what the machine offers. The measurements here use CPU.
 
 **Retrieval ablation** (answerable queries; supplementary set):
 
@@ -253,8 +253,8 @@ Per-stage p50 latency on the laptop CPU:
 | LLM only (L1, L3, L4 off) | 5/6 | 17/20 | 6/6 | 2/14 |
 
 - **The gate improves accuracy on real questions, not just safety.** Without it, low-relevance chunks reach the model, and it wrongly refuses two real questions, including official query 3.
-- **L3 and L4 never fired with the 3B model:** it stayed faithful to the documents. They are near-zero-cost insurance for weaker or swapped models, for prompt drift and for distribution shift. They are unit-tested against fabricated codes, values and quotes.
-- **The two supplementary "misses" (S6, S7) are scorer artifacts.** The queries are bare keywords (`RDR_CAL_INIT`, `Alpha-7-Tango`), and the model answered them correctly by returning the command and the code. The reference texts were written as descriptions, so the key-fact matcher can't credit them.
+- **L3 and L4 rarely need to act with the 3B model:** 0 times on these 20 queries, 2 times on the 100-query set (§6.5). They are near-zero-cost insurance for weaker or swapped models, for prompt drift and for distribution shift, and they are unit-tested against fabricated codes, values and quotes.
+- **The two supplementary "misses" (S6, S7) come from the scorer.** The queries are bare keywords (`RDR_CAL_INIT`, `Alpha-7-Tango`), and the model answered with the command and the code. The reference texts were written as descriptions, so the key-fact matcher can't credit them.
 
 ### 6.4 Kaggle notebook run (internet disabled, Tesla T4)
 
@@ -264,11 +264,11 @@ This is the same code, run as an attached public notebook:
 
 | Set | Overall | Answerable correct | Traps refused | False refusals | Retrieval hit@1 | p50 latency | p95 latency |
 |---|---|---|---|---|---|---|---|
-| Official | **6/6** | 4/4 | **2/2** | **0/4** | 4/4 | 3.4 s | 4.7 s |
-| Supplementary | 12/14 | 8/10 | 4/4 | 0/10 | 10/10 | 3.3 s | 4.1 s |
-| All | **18/20** | 12/14 | **6/6** | **0/14** | 14/14 | 3.3 s | 4.6 s |
+| Official | **6/6** | 4/4 | **2/2** | **0/4** | 4/4 | 3.4 s | 5.0 s |
+| Supplementary | 12/14 | 8/10 | 4/4 | 0/10 | 10/10 | 3.4 s | 4.2 s |
+| All | **18/20** | 12/14 | **6/6** | **0/14** | 14/14 | 3.4 s | 4.5 s |
 
-- **Latency:** generation drops from ~7.4 s (laptop CPU, 4-bit Ollama) to ~2.7 s (T4, fp16), and the LLM loads in 16.7 s. The retrieval and verification stages are unchanged.
+- **Latency:** end-to-end p50 drops from 7.6 s (laptop CPU, 4-bit Ollama) to 3.4 s (T4, fp16), and the LLM loads in 16.7 s. Raw outputs are in `docs/results/kaggle/`.
 - **Guardrail ablation on the T4 run:** the full configuration has 0/14 false refusals, while "no gate" and "LLM only" each have 1/14. This agrees with the CPU run: the gate improves answer quality by keeping noisy chunks away from the model.
 
 **CPU and GPU give identical answers.** Same notebook, official set, LLM forced to CPU:
@@ -368,7 +368,7 @@ The system never falls back to "answer without verification". `/health` reports 
 
 ## 9. Limitations and next steps
 
-- **Small evaluation sets.** 6 official plus 14 supplementary queries. τ, and the claim that L3/L4 never fire, should be re-validated on a larger labelled set before production.
+- **Evaluation scale.** 6 official, 14 supplementary and 100 extended queries, all written against 3 short SOPs. τ should be re-validated on a labelled set drawn from real operator questions before production.
 - **CPU generation latency** (~7 s with 3B on a laptop). A GPU, vLLM batching, or the 1.5B model with a stricter prompt are the options, each with its measured trade-off.
 - **Next steps:**
   - OpenTelemetry → Phoenix tracing;
